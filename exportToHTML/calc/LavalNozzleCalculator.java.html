@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>LavalNozzleCalculator.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+LavalNozzleCalculator.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">calc</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.*;</span>
+
+<span class="s0">public class </span><span class="s1">LavalNozzleCalculator </span><span class="s0">implements </span><span class="s1">Calculator </span><span class="s2">{</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">StepResult calculate</span><span class="s2">(</span><span class="s1">Map</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">, </span><span class="s1">Double</span><span class="s2">&gt; </span><span class="s1">p</span><span class="s2">) {</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">steps </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+        <span class="s0">double </span><span class="s1">p0 </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;p0&quot;</span><span class="s2">, </span><span class="s4">101325.0</span><span class="s2">);</span>
+        <span class="s0">double </span><span class="s1">T0 </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;T0&quot;</span><span class="s2">, </span><span class="s4">300.0</span><span class="s2">);</span>
+        <span class="s0">double </span><span class="s1">gamma </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;gamma&quot;</span><span class="s2">, </span><span class="s4">1.4</span><span class="s2">);</span>
+        <span class="s0">double </span><span class="s1">R </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;R&quot;</span><span class="s2">, </span><span class="s4">287.0</span><span class="s2">);</span>
+        <span class="s0">double </span><span class="s1">mdot </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;massFlow&quot;</span><span class="s2">, </span><span class="s4">1.0</span><span class="s2">);</span>
+
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;1️⃣ Входные данные: p₀=&quot; </span><span class="s2">+ </span><span class="s1">p0 </span><span class="s2">+ </span><span class="s3">&quot; Па, T₀=&quot; </span><span class="s2">+ </span><span class="s1">T0 </span><span class="s2">+ </span><span class="s3">&quot; K, γ=&quot; </span><span class="s2">+ </span><span class="s1">gamma</span><span class="s2">);</span>
+
+        <span class="s0">double </span><span class="s1">a0 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sqrt</span><span class="s2">(</span><span class="s1">gamma </span><span class="s2">* </span><span class="s1">R </span><span class="s2">* </span><span class="s1">T0</span><span class="s2">);</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;2️⃣ Скорость звука a₀ = &quot; </span><span class="s2">+ </span><span class="s1">a0 </span><span class="s2">+ </span><span class="s3">&quot; м/с&quot;</span><span class="s2">);</span>
+
+        <span class="s0">double </span><span class="s1">rho0 </span><span class="s2">= </span><span class="s1">p0 </span><span class="s2">/ (</span><span class="s1">R </span><span class="s2">* </span><span class="s1">T0</span><span class="s2">);</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;3️⃣ Плотность при входе ρ₀ = &quot; </span><span class="s2">+ </span><span class="s1">rho0 </span><span class="s2">+ </span><span class="s3">&quot; кг/м³&quot;</span><span class="s2">);</span>
+
+        <span class="s0">double </span><span class="s1">Astar </span><span class="s2">= </span><span class="s1">mdot </span><span class="s2">/ (</span><span class="s1">rho0 </span><span class="s2">* </span><span class="s1">a0</span><span class="s2">);</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;4️⃣ Критическое сечение A* = &quot; </span><span class="s2">+ </span><span class="s1">Astar </span><span class="s2">+ </span><span class="s3">&quot; м²&quot;</span><span class="s2">);</span>
+
+        <span class="s0">double </span><span class="s1">Me </span><span class="s2">= </span><span class="s4">2.0</span><span class="s2">; </span><span class="s5">// для примера — число Маха в выходе</span>
+        <span class="s0">double </span><span class="s1">Ae </span><span class="s2">= </span><span class="s1">Astar </span><span class="s2">* (</span><span class="s4">1 </span><span class="s2">/ </span><span class="s1">Me</span><span class="s2">) * </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">pow</span><span class="s2">((</span><span class="s4">1 </span><span class="s2">+ </span><span class="s4">0.5 </span><span class="s2">* (</span><span class="s1">gamma </span><span class="s2">- </span><span class="s4">1</span><span class="s2">) * </span><span class="s1">Me </span><span class="s2">* </span><span class="s1">Me</span><span class="s2">) / (</span><span class="s4">1.2</span><span class="s2">), (</span><span class="s1">gamma </span><span class="s2">+ </span><span class="s4">1</span><span class="s2">) / (</span><span class="s4">2 </span><span class="s2">* (</span><span class="s1">gamma </span><span class="s2">- </span><span class="s4">1</span><span class="s2">)));</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;5️⃣ Выходное сечение Aₑ = &quot; </span><span class="s2">+ </span><span class="s1">Ae </span><span class="s2">+ </span><span class="s3">&quot; м²&quot;</span><span class="s2">);</span>
+
+        <span class="s1">Map</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">, </span><span class="s1">Double</span><span class="s2">&gt; </span><span class="s1">result </span><span class="s2">= </span><span class="s0">new </span><span class="s1">LinkedHashMap</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;Speed of Sound (m/s)&quot;</span><span class="s2">, </span><span class="s1">a0</span><span class="s2">);</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;Density (kg/m³)&quot;</span><span class="s2">, </span><span class="s1">rho0</span><span class="s2">);</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;A*&quot;</span><span class="s2">, </span><span class="s1">Astar</span><span class="s2">);</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;A_exit&quot;</span><span class="s2">, </span><span class="s1">Ae</span><span class="s2">);</span>
+
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;✅ Расчёт завершён&quot;</span><span class="s2">);</span>
+
+        <span class="s0">return new </span><span class="s1">StepResult</span><span class="s2">(</span><span class="s1">result</span><span class="s2">, </span><span class="s1">steps</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

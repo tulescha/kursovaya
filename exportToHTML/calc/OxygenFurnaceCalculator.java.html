@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>OxygenFurnaceCalculator.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+OxygenFurnaceCalculator.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">calc</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.*;</span>
+
+<span class="s0">public class </span><span class="s1">OxygenFurnaceCalculator </span><span class="s0">implements </span><span class="s1">Calculator </span><span class="s2">{</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">StepResult calculate</span><span class="s2">(</span><span class="s1">Map</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">, </span><span class="s1">Double</span><span class="s2">&gt; </span><span class="s1">p</span><span class="s2">) {</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">steps </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+        <span class="s0">double </span><span class="s1">mass </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;mass&quot;</span><span class="s2">, </span><span class="s4">1000.0</span><span class="s2">);          </span><span class="s5">// масса металла, кг</span>
+        <span class="s0">double </span><span class="s1">oxygenFlow </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;oxygenFlow&quot;</span><span class="s2">, </span><span class="s4">300.0</span><span class="s2">); </span><span class="s5">// расход O₂, м³/ч</span>
+        <span class="s0">double </span><span class="s1">t0 </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">getOrDefault</span><span class="s2">(</span><span class="s3">&quot;tInitial&quot;</span><span class="s2">, </span><span class="s4">25.0</span><span class="s2">);            </span><span class="s5">// начальная температура, °C</span>
+
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;1️⃣ Приняты данные: масса = &quot; </span><span class="s2">+ </span><span class="s1">mass </span><span class="s2">+ </span><span class="s3">&quot; кг, расход O₂ = &quot; </span><span class="s2">+ </span><span class="s1">oxygenFlow </span><span class="s2">+ </span><span class="s3">&quot; м³/ч, T₀ = &quot; </span><span class="s2">+ </span><span class="s1">t0 </span><span class="s2">+ </span><span class="s3">&quot; °C&quot;</span><span class="s2">);</span>
+
+        <span class="s5">// Условная формула: теплота Q = k * mass, где k — энергия на нагрев</span>
+        <span class="s0">double </span><span class="s1">k </span><span class="s2">= </span><span class="s4">2500</span><span class="s2">; </span><span class="s5">// кДж/кг</span>
+        <span class="s0">double </span><span class="s1">Q </span><span class="s2">= </span><span class="s1">k </span><span class="s2">* </span><span class="s1">mass</span><span class="s2">;</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;2️⃣ Энергия нагрева Q = &quot; </span><span class="s2">+ </span><span class="s1">Q </span><span class="s2">+ </span><span class="s3">&quot; кДж&quot;</span><span class="s2">);</span>
+
+        <span class="s5">// Рост температуры</span>
+        <span class="s0">double </span><span class="s1">c </span><span class="s2">= </span><span class="s4">0.84</span><span class="s2">; </span><span class="s5">// кДж/(кг·°C)</span>
+        <span class="s0">double </span><span class="s1">deltaT </span><span class="s2">= </span><span class="s1">Q </span><span class="s2">/ (</span><span class="s1">mass </span><span class="s2">* </span><span class="s1">c</span><span class="s2">);</span>
+        <span class="s0">double </span><span class="s1">tFinal </span><span class="s2">= </span><span class="s1">t0 </span><span class="s2">+ </span><span class="s1">deltaT</span><span class="s2">;</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;3️⃣ Расчёт конечной температуры T₁ = &quot; </span><span class="s2">+ </span><span class="s1">tFinal </span><span class="s2">+ </span><span class="s3">&quot; °C&quot;</span><span class="s2">);</span>
+
+        <span class="s5">// Время продувки</span>
+        <span class="s0">double </span><span class="s1">time </span><span class="s2">= </span><span class="s1">mass </span><span class="s2">/ </span><span class="s1">oxygenFlow</span><span class="s2">; </span><span class="s5">// упрощённая модель</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;4️⃣ Время продувки t = &quot; </span><span class="s2">+ </span><span class="s1">time </span><span class="s2">+ </span><span class="s3">&quot; ч&quot;</span><span class="s2">);</span>
+
+        <span class="s5">// Расход кислорода</span>
+        <span class="s0">double </span><span class="s1">oxygenUsed </span><span class="s2">= </span><span class="s1">oxygenFlow </span><span class="s2">* </span><span class="s1">time</span><span class="s2">;</span>
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;5️⃣ Общий расход кислорода = &quot; </span><span class="s2">+ </span><span class="s1">oxygenUsed </span><span class="s2">+ </span><span class="s3">&quot; м³&quot;</span><span class="s2">);</span>
+
+        <span class="s1">Map</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">, </span><span class="s1">Double</span><span class="s2">&gt; </span><span class="s1">result </span><span class="s2">= </span><span class="s0">new </span><span class="s1">LinkedHashMap</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;Final Temperature (°C)&quot;</span><span class="s2">, </span><span class="s1">tFinal</span><span class="s2">);</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;Oxygen Used (m³)&quot;</span><span class="s2">, </span><span class="s1">oxygenUsed</span><span class="s2">);</span>
+        <span class="s1">result</span><span class="s2">.</span><span class="s1">put</span><span class="s2">(</span><span class="s3">&quot;Process Time (h)&quot;</span><span class="s2">, </span><span class="s1">time</span><span class="s2">);</span>
+
+        <span class="s1">steps</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s3">&quot;✅ Расчёт завершён&quot;</span><span class="s2">);</span>
+
+        <span class="s0">return new </span><span class="s1">StepResult</span><span class="s2">(</span><span class="s1">result</span><span class="s2">, </span><span class="s1">steps</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
