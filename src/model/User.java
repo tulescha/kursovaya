@@ -8,9 +8,6 @@ public class User {
     private String role; // e.g., "admin" or "user"
 
 
-    public User() {}
-
-
     public User(int id, String username, String passwordHash, String role) {
         this.id = id;
         this.username = username;
