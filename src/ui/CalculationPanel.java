@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+
 public class CalculationPanel extends JPanel {
     private JComboBox<String> calcTypeBox;
     private JTextField inputField1, inputField2, inputField3, inputField4, inputField5;
@@ -22,15 +23,14 @@ public class CalculationPanel extends JPanel {
     private JButton btnExport;
     private JPanel inputPanel; // Панель для полей ввода
 
+
     public CalculationPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.white);
-
-        // ===== Верхняя панель с выбором типа расчёта =====
+// ===== Верхняя панель с выбором типа расчёта =====
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createTitledBorder("Параметры расчёта"));
-
-        // Панель для выбора типа расчета
+// Панель для выбора типа расчета
         JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         typePanel.add(new JLabel("Тип расчёта:"));
         calcTypeBox = new JComboBox<>(new String[]{
@@ -39,54 +39,44 @@ public class CalculationPanel extends JPanel {
         });
         typePanel.add(calcTypeBox);
         topPanel.add(typePanel, BorderLayout.NORTH);
-
-        // Панель для полей ввода (будет меняться динамически)
+// Панель для полей ввода (будет меняться динамически)
         inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
         topPanel.add(inputPanel, BorderLayout.CENTER);
-
         add(topPanel, BorderLayout.NORTH);
-
-        // Инициализируем поля ввода
+// Инициализируем поля ввода
         inputField1 = new JTextField();
         inputField2 = new JTextField();
         inputField3 = new JTextField();
         inputField4 = new JTextField();
         inputField5 = new JTextField();
-
-        // Добавляем слушатель для смены интерфейса при выборе типа расчета
+// Добавляем слушатель для смены интерфейса при выборе типа расчета
         calcTypeBox.addActionListener(e -> updateInputFields());
-
-        // Инициализируем поля для первого выбранного типа
+// Инициализируем поля для первого выбранного типа
         updateInputFields();
-
-        // ===== Центральная панель для вывода =====
+// ===== Центральная панель для вывода =====
         resultArea = new JTextArea(12, 40);
         resultArea.setEditable(false);
         resultArea.setBorder(BorderFactory.createTitledBorder("Результаты расчёта"));
         add(new JScrollPane(resultArea), BorderLayout.CENTER);
-
-        // ===== Нижняя панель с кнопками =====
+// ===== Нижняя панель с кнопками =====
         JPanel btnPanel = new JPanel();
         btnCalculate = new JButton("Выполнить расчёт");
         btnRandom = new JButton("Случайные данные");
         btnExport = new JButton("Экспорт в TXT");
-
         btnPanel.add(btnCalculate);
         btnPanel.add(btnRandom);
         btnPanel.add(btnExport);
         add(btnPanel, BorderLayout.SOUTH);
-
-        // ===== Обработка событий =====
+// ===== Обработка событий =====
         btnCalculate.addActionListener(e -> performCalculation());
         btnRandom.addActionListener(e -> generateRandom());
         btnExport.addActionListener(e -> exportToTXT());
     }
 
     private void updateInputFields() {
-        // Очищаем панель ввода
+// Очищаем панель ввода
         inputPanel.removeAll();
-
         String type = (String) calcTypeBox.getSelectedItem();
 
         if (type.equals("Расчёт кислородной фурмы")) {
@@ -108,8 +98,7 @@ public class CalculationPanel extends JPanel {
             inputPanel.add(new JLabel("Массовый расход (кг/с):"));
             inputPanel.add(inputField5);
         }
-
-        // Обновляем панель
+// Обновляем панель
         inputPanel.revalidate();
         inputPanel.repaint();
     }
@@ -119,7 +108,6 @@ public class CalculationPanel extends JPanel {
             String type = (String) calcTypeBox.getSelectedItem();
             Calculator calculator;
             Map<String, Double> params = new HashMap<>();
-
             if (type.equals("Расчёт кислородной фурмы")) {
                 calculator = new OxygenFurnaceCalculator();
                 params.put("mass", Double.parseDouble(inputField1.getText()));
@@ -133,21 +121,16 @@ public class CalculationPanel extends JPanel {
                 params.put("R", Double.parseDouble(inputField4.getText()));
                 params.put("massFlow", Double.parseDouble(inputField5.getText()));
             }
-
             StepResult result = calculator.calculate(params);
-
             StringBuilder sb = new StringBuilder();
             sb.append("Тип расчёта: ").append(type).append("\n\n");
-
             for (String step : result.getSteps()) {
                 sb.append(step).append("\n");
             }
-
             sb.append("\nРезультаты:\n");
             for (Map.Entry<String, Double> entry : result.getResults().entrySet()) {
                 sb.append("• ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
-
             resultArea.setText(sb.toString());
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Введите корректные числовые значения!",
@@ -161,7 +144,6 @@ public class CalculationPanel extends JPanel {
     private void generateRandom() {
         Random r = new Random();
         String type = (String) calcTypeBox.getSelectedItem();
-
         if (type.equals("Расчёт кислородной фурмы")) {
             inputField1.setText(String.format("%.2f", 500 + r.nextDouble() * 1500));
             inputField2.setText(String.format("%.2f", 100 + r.nextDouble() * 400));

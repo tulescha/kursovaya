@@ -5,11 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 
-public class DataPanel extends JPanel {
+public class DataManagementPanel extends JPanel { // Имя класса изменено
     private DefaultListModel<Double> model = new DefaultListModel<>();
     private JList<Double> list = new JList<>(model);
 
-    public DataPanel() {
+    public DataManagementPanel() {
         setLayout(new BorderLayout());
         JPanel top = new JPanel();
         JButton add = new JButton("Добавить");
