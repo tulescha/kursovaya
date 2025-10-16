@@ -11,7 +11,7 @@ public class MainFrame extends JFrame {
     private JPanel cards = new JPanel(cardLayout);
     private User currentUser;
 
-    // Новая панель, содержащая все вкладки после входа
+    // Панель, содержащая все вкладки после входа
     private JTabbedPane mainContentPanel;
 
     public MainFrame() {
@@ -34,11 +34,11 @@ public class MainFrame extends JFrame {
 
         // 3. Добавляем панели в карты
         cards.add(authPanel, "auth");
-        cards.add(mainContentPanel, "main"); // Основное окно после входа
+        cards.add(mainContentPanel, "main");
 
         add(cards, BorderLayout.CENTER);
 
-        // 4. Устанавливаем меню (будет видно постоянно, но активно после входа)
+        // 4. Устанавливаем меню (будет видно постоянно)
         setJMenuBar(createMenuBar());
 
         // 5. Показываем панель авторизации при старте
@@ -47,15 +47,15 @@ public class MainFrame extends JFrame {
 
     // Инициализация JTabbedPane со всеми вкладками из скриншотов
     private void initializeMainContentPanel() {
-        mainContentPanel = new JTabbedPane(JTabbedPane.TOP); // Вкладки сверху
+        mainContentPanel = new JTabbedPane(JTabbedPane.TOP);
 
-        // 1. Калькулятор
+        // 1. Калькулятор (Ваш оригинальный CalculationPanel)
         mainContentPanel.addTab("Калькулятор", new CalculationPanel());
 
         // 2. Визуализация Алгоритма
         mainContentPanel.addTab("Визуализация Алгоритма", new AlgorithmPanel());
 
-        // 3. Управление Данными
+        // 3. Управление Данными (Ваш DataPanel, переименованный)
         mainContentPanel.addTab("Управление Данными", new DataManagementPanel());
 
         // 4. Графики
@@ -68,28 +68,25 @@ public class MainFrame extends JFrame {
         mainContentPanel.addTab("Формулы", new FormulasPanel());
     }
 
-    // Создание строки меню, как на скриншотах
+    // Создание строки меню: "Файл" и "Справка"
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("Файл");
+        // Эти пункты меню можно использовать для экспорта/импорта/сохранения
+        fileMenu.add(new JMenuItem("Сохранить расчет"));
+        fileMenu.add(new JMenuItem("Импорт данных"));
+        fileMenu.add(new JMenuItem("Экспорт данных"));
+        fileMenu.addSeparator();
         JMenuItem exitItem = new JMenuItem("Выход");
         exitItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitItem);
 
         JMenu helpMenu = new JMenu("Справка");
-        JMenuItem aboutItem = new JMenuItem("О программе");
-        helpMenu.add(aboutItem);
+        helpMenu.add(new JMenuItem("О программе"));
 
         menuBar.add(fileMenu);
-        // Добавление заголовков основных разделов в меню, как на скриншоте
-        menuBar.add(new JMenu("Калькулятор"));
-        menuBar.add(new JMenu("Визуализация Алгоритма"));
-        menuBar.add(new JMenu("Управление Данными"));
-        menuBar.add(new JMenu("Графики"));
-        menuBar.add(new JMenu("Оборудование"));
-        menuBar.add(new JMenu("Формулы"));
-        menuBar.add(Box.createHorizontalGlue()); // Выравнивание
+        menuBar.add(Box.createHorizontalGlue()); // Для выравнивания справки вправо
         menuBar.add(helpMenu);
 
         return menuBar;
@@ -97,7 +94,7 @@ public class MainFrame extends JFrame {
 
     public void onLoginSuccess(User user) {
         this.currentUser = user;
-        showMainContent(); // Переходим к основному содержимому после успешного входа
+        showMainContent();
         setTitle("Калькулятор металлурга — Пользователь: " + user.getUsername());
     }
 
