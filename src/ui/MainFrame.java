@@ -7,9 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
+    public static User currentUser;
     private CardLayout cardLayout = new CardLayout();
     private JPanel cards = new JPanel(cardLayout);
-    private User currentUser;
+//    private User currentUser;
 
     // Панель, содержащая все вкладки после входа
     private JTabbedPane mainContentPanel;
@@ -50,13 +51,15 @@ public class MainFrame extends JFrame {
         mainContentPanel = new JTabbedPane(JTabbedPane.TOP);
 
         // 1. Калькулятор (Ваш оригинальный CalculationPanel)
-        mainContentPanel.addTab("Калькулятор", new CalculationPanel());
+        mainContentPanel.addTab("Калькулятор", new CalculationPanel(this));
+
 
         // 2. Визуализация Алгоритма
         mainContentPanel.addTab("Визуализация Алгоритма", new AlgorithmPanel());
 
         // 3. Управление Данными (Ваш DataPanel, переименованный)
         mainContentPanel.addTab("Управление Данными", new DataManagementPanel());
+
 
         // 4. Графики
         mainContentPanel.addTab("Графики", new GraphsPanel());
@@ -94,10 +97,15 @@ public class MainFrame extends JFrame {
 
     public void onLoginSuccess(User user) {
         this.currentUser = user;
+
         showMainContent();
         setTitle("Калькулятор металлурга — Пользователь: " + user.getUsername());
     }
 
     public void showAuth() { cardLayout.show(cards, "auth"); }
     public void showMainContent() { cardLayout.show(cards, "main"); }
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
 }

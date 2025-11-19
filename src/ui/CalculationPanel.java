@@ -4,6 +4,8 @@ import calc.Calculator;
 import calc.LavalNozzleCalculator;
 import calc.OxygenFurnaceCalculator;
 import calc.StepResult;
+import db.CalculationLogDAO;
+import model.CalculationLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,9 +24,11 @@ public class CalculationPanel extends JPanel {
     private JButton btnRandom;
     private JButton btnExport;
     private JPanel inputPanel; // Панель для полей ввода
+    private MainFrame mainFrame;
 
 
-    public CalculationPanel() {
+    public CalculationPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
         setBackground(Color.white);
 // ===== Верхняя панель с выбором типа расчёта =====
@@ -132,6 +136,21 @@ public class CalculationPanel extends JPanel {
                 sb.append("• ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
             resultArea.setText(sb.toString());
+            try {
+                CalculationLog log = new CalculationLog(
+                        mainFrame.getCurrentUser().getId(),   // ← вот здесь используется getCurrentUser()
+                        type,
+                        params.toString(),
+                        result.getResults().toString(),
+                        java.time.LocalDateTime.now().toString()
+                );
+                CalculationLogDAO.add(log);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Ошибка сохранения истории: " + ex.getMessage());
+            }
+
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Введите корректные числовые значения!",
                     "Ошибка ввода", JOptionPane.ERROR_MESSAGE);

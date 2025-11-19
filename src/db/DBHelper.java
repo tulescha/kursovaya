@@ -22,7 +22,18 @@ public class DBHelper {
         value REAL NOT NULL,
         created_at TEXT
     )
+""");           s.execute("""
+CREATE TABLE IF NOT EXISTS calculation_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    calc_type TEXT NOT NULL,
+    input_data TEXT NOT NULL,
+    result_data TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+)
 """);
+
 
                 // Добавляем тестового пользователя
                 try {

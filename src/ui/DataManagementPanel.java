@@ -1,150 +1,133 @@
 package ui;
 
-import db.DataRecordDAO;
+import db.CalculationLogDAO;
+import db.DBHelper;
+import model.CalculationLog;
+import model.User;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.*;
+import java.io.FileWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
 
 public class DataManagementPanel extends JPanel {
 
-    private DefaultListModel<Double> model = new DefaultListModel<>();
-    private JList<Double> list = new JList<>(model);
+    private JTable table;
+    private DefaultTableModel model;
 
     public DataManagementPanel() {
         setLayout(new BorderLayout());
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        model = new DefaultTableModel(
+                new Object[]{"ID", "Пользователь", "Тип расчёта", "Входные данные", "Результаты", "Дата"}, 0
+        );
 
-        JButton add = new JButton("Добавить");
-        JButton gen = new JButton("Генерировать (100)");
-        JButton clear = new JButton("Удалить выбранные");
-        JButton search = new JButton("Поиск");
-        JButton sortAsc = new JButton("Сорт ↑");
-        JButton sortDesc = new JButton("Сорт ↓");
+        table = new JTable(model);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        JButton importBtn = new JButton("Импорт");
-        JButton exportBtn = new JButton("Экспорт");
+        loadData();
 
-        top.add(add); top.add(gen); top.add(clear);
-        top.add(search); top.add(sortAsc); top.add(sortDesc);
-        top.add(importBtn); top.add(exportBtn);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
-        add(top, BorderLayout.NORTH);
-        add(new JScrollPane(list), BorderLayout.CENTER);
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton btnRefresh = new JButton("Обновить");
+        JButton btnDelete = new JButton("Удалить");
+        JButton btnExport = new JButton("Экспорт CSV");
+        JButton btnSearch = new JButton("Поиск по типу");
 
-        reloadFromDB();
+        buttons.add(btnRefresh);
+        buttons.add(btnDelete);
+        buttons.add(btnExport);
+        buttons.add(btnSearch);
 
-        add.addActionListener(this::onAdd);
-        gen.addActionListener(e -> generate100());
-        clear.addActionListener(e -> deleteSelected());
-        search.addActionListener(e -> onSearch());
-        sortAsc.addActionListener(e -> loadSorted(true));
-        sortDesc.addActionListener(e -> loadSorted(false));
+        add(buttons, BorderLayout.NORTH);
 
-        importBtn.addActionListener(e -> importData());
-        exportBtn.addActionListener(e -> exportData());
+        // обновление
+        btnRefresh.addActionListener(e -> loadData());
+
+        // удаление
+        btnDelete.addActionListener(e -> deleteSelected());
+
+        // экспорт
+        btnExport.addActionListener(e -> exportToCSV());
+
+        // поиск
+        btnSearch.addActionListener(e -> searchByType());
     }
 
-    private void reloadFromDB() {
+    private void loadData() {
+        model.setRowCount(0);
         try {
-            model.clear();
-            for (double d : DataRecordDAO.getAll()) model.addElement(d);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка БД: " + ex.getMessage());
+            List<CalculationLog> logs = CalculationLogDAO.getAll();
+            for (CalculationLog log : logs) {
+                model.addRow(new Object[]{
+                        log.getId(),
+                        getUsername(log.getUserId()),
+                        log.getCalcType(),
+                        log.getInputData(),
+                        log.getResultData(),
+                        log.getCreatedAt()
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Ошибка загрузки данных: " + e.getMessage());
         }
     }
 
-    private void onAdd(ActionEvent e) {
-        String s = JOptionPane.showInputDialog(this, "Введите число:");
-        if (s == null) return;
+    private String getUsername(int userId) {
         try {
-            double v = Double.parseDouble(s.replace(',', '.'));
-            DataRecordDAO.add(v);
-            reloadFromDB();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка: " + ex.getMessage());
-        }
-    }
-
-    private void generate100() {
-        Random r = new Random();
-        try {
-            for (int i = 0; i < 100; i++)
-                DataRecordDAO.add(r.nextDouble() * 100);
-            reloadFromDB();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка генерации: " + ex.getMessage());
-        }
+            for (User u : DBHelper.listUsers()) {
+                if (u.getId() == userId) return u.getUsername();
+            }
+        } catch (Exception ignored) {}
+        return "unknown";
     }
 
     private void deleteSelected() {
-        List<Double> sel = list.getSelectedValuesList();
-        if (sel.isEmpty()) return;
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Выберите строку!");
+            return;
+        }
+
+        int id = (int) model.getValueAt(row, 0);
 
         try {
-            for (Double d : sel) {
-                // using approximate delete (value unique enough for lab)
-                // you can extend DAO to delete by exact row id
-                DataRecordDAO.search(d, d).forEach(x -> {}); // placeholder
+            CalculationLogDAO.delete(id);
+            loadData();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Ошибка удаления: " + e.getMessage());
+        }
+    }
+
+    private void exportToCSV() {
+        try (FileWriter fw = new FileWriter("history_export.csv")) {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                fw.write(
+                        model.getValueAt(i, 0) + ";" +
+                                model.getValueAt(i, 1) + ";" +
+                                model.getValueAt(i, 2) + ";" +
+                                model.getValueAt(i, 3) + ";" +
+                                model.getValueAt(i, 4) + ";" +
+                                model.getValueAt(i, 5) + "\n"
+                );
             }
-            reloadFromDB();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка удаления: " + ex.getMessage());
-        }
-    }
-
-    private void onSearch() {
-        String minS = JOptionPane.showInputDialog(this, "Минимум:");
-        String maxS = JOptionPane.showInputDialog(this, "Максимум:");
-
-        try {
-            double min = Double.parseDouble(minS);
-            double max = Double.parseDouble(maxS);
-            model.clear();
-            for (double d : DataRecordDAO.search(min, max)) model.addElement(d);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Ошибка поиска: " + ex.getMessage());
-        }
-    }
-
-    private void loadSorted(boolean asc) {
-        try {
-            model.clear();
-            for (double d : DataRecordDAO.sorted(asc)) model.addElement(d);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Ошибка сортировки: " + e.getMessage());
-        }
-    }
-
-    private void importData() {
-        JFileChooser f = new JFileChooser();
-        if (f.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(f.getSelectedFile()))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                DataRecordDAO.add(Double.parseDouble(line));
-            }
-            reloadFromDB();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Ошибка импорта: " + e.getMessage());
-        }
-    }
-
-    private void exportData() {
-        JFileChooser f = new JFileChooser();
-        if (f.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
-
-        try (PrintWriter pw = new PrintWriter(new FileWriter(f.getSelectedFile()))) {
-            for (int i = 0; i < model.size(); i++)
-                pw.println(model.get(i));
+            JOptionPane.showMessageDialog(this, "Экспорт завершён!");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Ошибка экспорта: " + e.getMessage());
+        }
+    }
+
+    private void searchByType() {
+        String type = JOptionPane.showInputDialog("Введите тип расчёта (Лаваль / Фурма):");
+        if (type == null) return;
+
+        for (int i = model.getRowCount() - 1; i >= 0; i--) {
+            if (!model.getValueAt(i, 2).toString().toLowerCase().contains(type.toLowerCase())) {
+                model.removeRow(i);
+            }
         }
     }
 }
