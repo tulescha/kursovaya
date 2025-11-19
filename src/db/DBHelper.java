@@ -16,6 +16,13 @@ public class DBHelper {
                 s.execute("PRAGMA foreign_keys = ON");
                 s.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, role TEXT NOT NULL)");
                 s.execute("CREATE TABLE IF NOT EXISTS calculations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, input_data TEXT, result_data TEXT, created_at TEXT)");
+                s.execute("""
+    CREATE TABLE IF NOT EXISTS records(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        value REAL NOT NULL,
+        created_at TEXT
+    )
+""");
 
                 // Добавляем тестового пользователя
                 try {
