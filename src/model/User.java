@@ -15,7 +15,11 @@ public class User {
         this.role = role;
     }
 
-
+    // Добавьте в класс User метод toString для корректного отображения в JComboBox
+    @Override
+    public String toString() {
+        return username + " (ID: " + id + ")";
+    }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getUsername() { return username; }
