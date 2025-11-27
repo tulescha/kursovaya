@@ -76,7 +76,6 @@ public class MainFrame extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("Файл");
-        // Эти пункты меню можно использовать для экспорта/импорта/сохранения
         fileMenu.add(new JMenuItem("Сохранить расчет"));
         fileMenu.add(new JMenuItem("Импорт данных"));
         fileMenu.add(new JMenuItem("Экспорт данных"));
@@ -86,13 +85,32 @@ public class MainFrame extends JFrame {
         fileMenu.add(exitItem);
 
         JMenu helpMenu = new JMenu("Справка");
-        helpMenu.add(new JMenuItem("О программе"));
+
+        // Добавляем пункты справки
+        JMenuItem instructionItem = new JMenuItem("Инструкция пользователя");
+        JMenuItem errorsItem = new JMenuItem("Решение ошибок");
+        JMenuItem aboutItem = new JMenuItem("О программе");
+
+        instructionItem.addActionListener(e -> showHelpDialog("instruction"));
+        errorsItem.addActionListener(e -> showHelpDialog("errors"));
+        aboutItem.addActionListener(e -> showHelpDialog("about"));
+
+        helpMenu.add(instructionItem);
+        helpMenu.add(errorsItem);
+        helpMenu.addSeparator();
+        helpMenu.add(aboutItem);
 
         menuBar.add(fileMenu);
-        menuBar.add(Box.createHorizontalGlue()); // Для выравнивания справки вправо
+        menuBar.add(Box.createHorizontalGlue());
         menuBar.add(helpMenu);
 
         return menuBar;
+    }
+
+    // Новый метод для показа диалога справки
+    private void showHelpDialog(String tab) {
+        HelpDialog helpDialog = new HelpDialog(this);
+        helpDialog.setVisible(true);
     }
 
     public void onLoginSuccess(User user) {
