@@ -1,0 +1,166 @@
+@startuml
+
+package "Графический интерфейс (UI)" {
+  class MainFrame {
+    - currentUser : User
+    - cardLayout : CardLayout
+    - mainContentPanel : JTabbedPane
+    + onLoginSuccess()
+    + getCurrentUser()
+  }
+
+  class AuthPanel {
+    - mainFrame : MainFrame
+    + onLogin()
+    + onRegister()
+  }
+
+  class CalculationPanel {
+    - mainFrame : MainFrame
+    + performCalculation()
+    + generateRandom()
+    + exportToTXT()
+  }
+
+  class GraphsPanel {
+    + buildGraph()
+    + exportData()
+    + exportImage()
+  }
+
+  class DataManagementPanel {
+    + loadData()
+    + exportToCSV()
+    + searchByType()
+  }
+
+  class FormulasPanel {
+    + createFormulaBlock()
+  }
+
+  class EquipmentPanel {
+    + createImagePanel()
+  }
+
+  class AlgorithmPanel {
+    + getDetailedAlgorithms()
+  }
+
+  class HelpDialog {
+    + createInstructionPanel()
+    + createErrorsPanel()
+    + createAboutPanel()
+  }
+}
+
+package "Бизнес-логика (Calc)" {
+  interface Calculator {
+    + calculate(params) : StepResult
+  }
+
+  class OxygenFurnaceCalculator {
+    + calculate(params) : StepResult
+  }
+
+  class LavalNozzleCalculator {
+    + calculate(params) : StepResult
+  }
+
+  class StepResult {
+    - results : Map<String, Double>
+    - steps : List<String>
+    + getResults()
+    + getSteps()
+  }
+}
+
+package "Модели данных (Model)" {
+  class User {
+    - id : int
+    - username : String
+    - passwordHash : String
+    - role : String
+    + toString()
+  }
+
+  class Calculation {
+    - id : int
+    - name : String
+    - inputData : String
+    - resultData : String
+    - createdAt : LocalDateTime
+  }
+
+  class CalculationLog {
+    - id : int
+    - userId : int
+    - calcType : String
+    - inputData : String
+    - resultData : String
+    - createdAt : String
+  }
+}
+
+package "Доступ к данным (DB)" {
+  class DBHelper {
+    - URL : String
+    + init()
+    + addUser()
+    + authenticateUser()
+    + listUsers()
+  }
+
+  class CalculationLogDAO {
+    + add()
+    + getAll()
+    + delete()
+  }
+}
+
+package "Утилиты (Util)" {
+  class CryptoUtils {
+    + hashPassword()
+    + verifyPassword()
+  }
+}
+
+package "Тестирование (Test)" {
+  class TestCalculation {
+    + testCalculationModelCRUD()
+    + testPasswordHashing()
+  }
+}
+
+' Связи между классами
+MainFrame --> AuthPanel
+MainFrame --> CalculationPanel
+MainFrame --> GraphsPanel
+MainFrame --> DataManagementPanel
+MainFrame --> FormulasPanel
+MainFrame --> EquipmentPanel
+MainFrame --> AlgorithmPanel
+MainFrame --> HelpDialog
+
+CalculationPanel --> Calculator
+OxygenFurnaceCalculator ..|> Calculator
+LavalNozzleCalculator ..|> Calculator
+
+CalculationPanel --> CalculationLogDAO
+GraphsPanel --> CalculationLogDAO
+DataManagementPanel --> CalculationLogDAO
+
+DBHelper --> CryptoUtils
+CalculationLogDAO --> DBHelper
+
+CalculationLogDAO --> CalculationLog
+DBHelper --> User
+
+TestCalculation --> CryptoUtils
+TestCalculation --> Calculation
+
+' Внешние зависимости
+GraphsPanel --> JFreeChart
+FormulasPanel --> JLaTeXMath
+DBHelper --> SQLite
+
+@enduml

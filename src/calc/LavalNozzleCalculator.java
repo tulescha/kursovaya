@@ -13,20 +13,20 @@ public class LavalNozzleCalculator implements Calculator {
         double R = p.getOrDefault("R", 287.0);
         double mdot = p.getOrDefault("massFlow", 1.0);
 
-        steps.add("1️⃣ Входные данные: p₀=" + p0 + " Па, T₀=" + T0 + " K, γ=" + gamma);
+        steps.add("1) Входные данные: p₀=" + p0 + " Па, T₀=" + T0 + " K, γ=" + gamma);
 
         double a0 = Math.sqrt(gamma * R * T0);
-        steps.add("2️⃣ Скорость звука a₀ = " + a0 + " м/с");
+        steps.add("2) Скорость звука a₀ = " + a0 + " м/с");
 
         double rho0 = p0 / (R * T0);
-        steps.add("3️⃣ Плотность при входе ρ₀ = " + rho0 + " кг/м³");
+        steps.add("3) Плотность при входе ρ₀ = " + rho0 + " кг/м³");
 
         double Astar = mdot / (rho0 * a0);
-        steps.add("4️⃣ Критическое сечение A* = " + Astar + " м²");
+        steps.add("4) Критическое сечение A* = " + Astar + " м²");
 
         double Me = 2.0; // для примера — число Маха в выходе
         double Ae = Astar * (1 / Me) * Math.pow((1 + 0.5 * (gamma - 1) * Me * Me) / (1.2), (gamma + 1) / (2 * (gamma - 1)));
-        steps.add("5️⃣ Выходное сечение Aₑ = " + Ae + " м²");
+        steps.add("5) Выходное сечение Aₑ = " + Ae + " м²");
 
         Map<String, Double> result = new LinkedHashMap<>();
         result.put("Speed of Sound (m/s)", a0);
@@ -34,7 +34,7 @@ public class LavalNozzleCalculator implements Calculator {
         result.put("A*", Astar);
         result.put("A_exit", Ae);
 
-        steps.add("✅ Расчёт завершён");
+        steps.add("Расчёт завершён");
 
         return new StepResult(result, steps);
     }
